@@ -5,10 +5,10 @@ from flask import Flask, render_template, request, redirect, url_for, abort, \
 from werkzeug.utils import secure_filename
 from influx_file_uploader.logic.csv_to_influx import converter
 
-app = Flask(__name__, template_folder='templates')
+app = Flask(__name__, template_folder='/code/influx_file_uploader/template')
 app.config['MAX_CONTENT_LENGTH'] = 2 * 1024 * 1024
 app.config['UPLOAD_EXTENSIONS'] = ['.csv']
-app.config['UPLOAD_PATH'] = 'uploads'
+app.config['UPLOAD_PATH'] = './'
 
 
 def validate_image(stream):
@@ -61,7 +61,7 @@ def upload(filename):
 
 
 def main():
-    app.run()
+    app.run(debug=True, port=8080, host='0.0.0.0')
 
 
 if __name__ == '__main__':
