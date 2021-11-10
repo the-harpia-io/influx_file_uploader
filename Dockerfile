@@ -6,4 +6,4 @@ RUN pip install -r requirements.txt
 COPY . .
 RUN python setup.py install
 
-CMD ["monitoring_controller"]
+CMD ["influx_file_uploader"]
