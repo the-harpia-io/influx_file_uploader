@@ -5,6 +5,7 @@ from flask import Flask, render_template, request, redirect, url_for, abort, \
 from werkzeug.utils import secure_filename
 from influx_file_uploader.logic.csv_to_influx import converter
 
+# app = Flask(__name__, template_folder='./template')
 app = Flask(__name__, template_folder='/code/influx_file_uploader/template')
 app.config['MAX_CONTENT_LENGTH'] = 2 * 1024 * 1024
 app.config['UPLOAD_EXTENSIONS'] = ['.csv']
@@ -33,24 +34,31 @@ def index():
 
 @app.route('/', methods=['POST'])
 def upload_files():
-    uploaded_file = request.files['file']
-    filename = secure_filename(uploaded_file.filename)
-    if filename != '':
-        file_ext = os.path.splitext(filename)[1]
-        if file_ext not in app.config['UPLOAD_EXTENSIONS']:
-            return "Invalid Format", 400
-        decoded_file = uploaded_file.read().decode('utf-8')
-        data = decoded_file.split('\n')
+    my_files = request.files
+    device_name = request.form['Device Name']
+    road_name = request.form['Road Name']
+    tags = {'device_name': device_name, 'road_name': road_name}
 
-        header = data.pop(0).split(';')[:-1]
+    for item in my_files:
+        uploaded_file = my_files.get(item)
+        filename = secure_filename(uploaded_file.filename)
+        if filename != '':
+            file_ext = os.path.splitext(filename)[1]
+            if file_ext not in app.config['UPLOAD_EXTENSIONS']:
+                return "Invalid Format", 400
+            decoded_file = uploaded_file.read().decode('utf-8')
+            data = decoded_file.split('\n')
 
-        full_data = []
-        for single_row in data:
-            single_result = single_row.split(';')[:-1]
-            enrich_result = dict(zip(header, single_result))
-            full_data.append(enrich_result)
+            header = data.pop(0).split(';')[:-1]
 
-        converter(full_data)
+            full_data = []
+            for single_row in data:
+                single_result = single_row.split(';')[:-1]
+                enrich_result = dict(zip(header, single_result))
+                enrich_result_with_tags = {**enrich_result, **tags}
+                full_data.append(enrich_result_with_tags)
+
+            converter(full_data)
 
     return '', 204
 
