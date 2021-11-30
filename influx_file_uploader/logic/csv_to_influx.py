@@ -63,7 +63,6 @@ def encode(msg):
 
 
 def write(msg):
-    print(msg)
     client = InfluxDBClient(host=INFLUXDB_HOST, port=8086, username='admin', password='password', ssl=False, verify_ssl=False)
     client.write_points(points=msg, database='firstbeach', protocol='line', time_precision='ms')
 
