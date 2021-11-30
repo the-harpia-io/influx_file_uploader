@@ -20,10 +20,12 @@ def format_tags(msg):
     tag = ["client=firstbeach"]
 
     if len(msg['device_name']) != 0:
-        tag.append(f"device_name=\"{msg['device_name']}\"")
+        device_name = msg['device_name'].replace(' ', '\ ')
+        tag.append(f"device_name={device_name}")
 
     if len(msg['road_name']) != 0:
-        tag.append(f"road_name=\"{msg['road_name']}\"")
+        road_name = msg['road_name'].replace(' ', '\ ')
+        tag.append(f"road_name={road_name}")
 
     return ','.join(tag)
 
