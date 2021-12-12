@@ -27,13 +27,16 @@ def format_tags(msg):
         road_name = msg['road_name'].replace(' ', '\ ')
         tag.append(f"road_name={road_name}")
 
+    if len(msg['upload_id']) != 0:
+        tag.append(f"upload_id={msg['upload_id']}")
+
     return ','.join(tag)
 
 
 def format_value(entry):
     field_pairs = []
     for key, value in entry.items():
-        if key not in ['Time', 'Date', 'device_name', 'road_name']:
+        if key not in ['Time', 'Date', 'device_name', 'road_name', 'upload_id']:
             field_pairs.append("{0!s}={1!s}".format(key, value))
     return ','.join(field_pairs)
 

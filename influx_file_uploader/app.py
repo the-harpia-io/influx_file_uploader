@@ -4,6 +4,7 @@ from flask import Flask, render_template, request, redirect, url_for, abort, \
     send_from_directory
 from werkzeug.utils import secure_filename
 from influx_file_uploader.logic.csv_to_influx import converter
+import shortuuid
 
 # app = Flask(__name__, template_folder='./template')
 app = Flask(__name__, template_folder='/code/influx_file_uploader/template')
@@ -40,6 +41,9 @@ def upload_files():
     tags = {'device_name': device_name, 'road_name': road_name}
 
     for item in my_files:
+        upload_id = shortuuid.uuid()
+        tags['upload_id'] = upload_id
+
         uploaded_file = my_files.get(item)
         filename = secure_filename(uploaded_file.filename)
         if filename != '':
